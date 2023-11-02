@@ -113,18 +113,29 @@ list_temp = []
 for item in min_max_city_filter.table:
     list_temp.append(float(item["temperature"]))
 
-print(max(list_temp))
-print(min(list_temp))
+print(f"Max EU country that doesn't has coastline has temperature = {max(list_temp)}")
+print(f"Min EU country that doesn't has coastline has temperature{min(list_temp)}")
 
 print()
+min_max_latitude = {}
 
-min_max_lati =  my_DB.search("countries")
-min_max_join_lati = my_table1.join(min_max_city, "country")
-min_max_lati_filter = min_max_join.filter(lambda x: x['EU'] == 'yes').filter(lambda x: x["coastline"] == "no")
 
-list_lati = []
-for item in min_max_join_lati.table:
-    list_lati.append(float(item["latitude"]))
+for city in my_table1.table:
+    country = city['country']
+    latitude = float(city['latitude'])
 
-print(min(list_lati))
-print(max(list_lati))
+    if country in min_max_latitude:
+
+        min_lat, max_lat = min_max_latitude[country]
+        if latitude < min_lat:
+            min_lat = latitude
+        if latitude > max_lat:
+            max_lat = latitude
+        min_max_latitude[country] = (min_lat, max_lat)
+    else:
+        min_max_latitude[country] = (latitude, latitude)
+
+
+
+for country, (min_lat, max_lat) in min_max_latitude.items():
+    print(f"{country} Latitude min: {min_lat}, max: {max_lat}")
